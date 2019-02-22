@@ -1,24 +1,37 @@
 var http = require('http');
 const fetch = require("fetch");
-const snippets = require("./snippets.json")
+const snippets = require("./snippets.json");
+const fs = require("fs");
 
-console.log("snippets ", snippets.compactOverlay.docs)
+const controlsList = JSON.parse(fs.readFileSync("./github-filefetcher/snippets.json", "utf-8"));
 
-//create a server object:
-http.createServer(function (req, res) {
-    fetchResponse(`https://api.github.com/repos/pwa-builder/pwabuilder-snippits/contents/src/${snippets.compactOverlay.docs}?`);
-    res.end(); 
-}).listen(8081); 
-
-
-function fetchResponse(url){
-    console.log("URL", url)
-    fetch.fetchUrl(url, (error, meta, body) => {
-    if(error){
-        console.log(error);
-        process.exit();
+function getDowndloadURL(control, file){
+    let path = '';
+    if(file == "docs"){
+        path = controlsList[control].docs;
     }
-    const file_metadata = JSON.parse(body.toString());
-    console.log(file_metadata.download_url);
-});
+    if(file == "example"){
+        path = controlsList[control].example;
+
+    }
+    
+    let promise = new Promise(function(resolve, reject){
+            fetch.fetchUrl(`https://api.github.com/repos/pwa-builder/pwabuilder-snippits/contents/src/${path}?`, (error, meta, body) => {
+                if(error){
+                    console.log(error);
+                    process.exit();
+                }
+                const file_metadata = JSON.parse(body.toString());
+                resolve( file_metadata.download_url);
+            })
+        }) 
+        
+    let ultraFinal = promise.then((result) => {
+        return result;
+    })
+    
+    return ultraFinal;
+
 }
+
+module.exports = getDowndloadURL;
