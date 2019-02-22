@@ -1,14 +1,19 @@
-const app = require('express')()
-const config = require('./config')
-const port = config.port
+const app = require('express')();
+const getDowndloadURL = require('./github-filefetcher/index');
 
-app.get('/', function (req, res) {
-    res.send('Hello World!')
+app.get('/get', async function(req,res){
+    let url = await getDowndloadURL(req.query.control, req.query.file);
+    if(url){
+        res.status(200).send({
+            url: url
+        })
+    } else {
+        res.status(404).send({
+            error: "Control or file doesn't exits"
+        })
+    }
 })
 
-// 404 page not found handler
-app.use(function(req, res){
-    res.status(404).send("The page doesn't exists. Please check the URL.");
-})
-
-app.listen(port, () => console.log(`App listening on port ${port}!`))
+app.listen(3000, () => {
+    console.log(`server running on port 3000`)
+  });

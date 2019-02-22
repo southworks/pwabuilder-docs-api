@@ -1,12 +1,13 @@
-var http = require('http');
 const fetch = require("fetch");
-const snippets = require("./snippets.json");
 const fs = require("fs");
 
 const controlsList = JSON.parse(fs.readFileSync("./github-filefetcher/snippets.json", "utf-8"));
 
 function getDowndloadURL(control, file){
     let path = '';
+    if(!controlsList[control]){
+        return false;
+    }
     if(file == "docs"){
         path = controlsList[control].docs;
     }
@@ -24,13 +25,11 @@ function getDowndloadURL(control, file){
                 const file_metadata = JSON.parse(body.toString());
                 resolve( file_metadata.download_url);
             })
+        }).then((res) => {
+            return res;
         }) 
-        
-    let ultraFinal = promise.then((result) => {
-        return result;
-    })
-    
-    return ultraFinal;
+   
+    return promise;
 
 }
 
