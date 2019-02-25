@@ -1,19 +1,21 @@
 const app = require('express')();
-const getDowndloadURL = require('./github-filefetcher/index');
+const getDowndloadURL = require('./github-filefetcher');
+const config = require('./config');
+const constants = require('./constants');
 
-app.get('/get', async function(req,res){
+app.get('/', async function(req,res){
     let url = await getDowndloadURL(req.query.control, req.query.file);
     if(url){
-        res.status(200).send({
+        res.status(constants.SUCESSFUL).send({
             url: url
         })
     } else {
-        res.status(404).send({
-            error: "Control or file doesn't exits"
+        res.status(constants.NOT_FOUND).send({
+            error: constants.ERROR_MESSAGE
         })
     }
 })
 
-app.listen(3000, () => {
-    console.log(`server running on port 3000`)
+app.listen(config.port, () => {
+    console.log(constants.PORT_INFO,config.port)
   });
