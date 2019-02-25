@@ -2,14 +2,14 @@ const app = require('express')();
 const getDowndloadURL = require('./github-filefetcher/index');
 
 app.get('/get', async function(req,res){
-    let url = await getDowndloadURL(req.query.control, req.query.file);
+    let url = await getDowndloadURL(req.query.snippet, req.query.file);
     if(url){
         res.status(200).send({
             url: url
         })
     } else {
         res.status(404).send({
-            error: "Control or file doesn't exits"
+            error: "Snippet or file doesn't exits"
         })
     }
 })

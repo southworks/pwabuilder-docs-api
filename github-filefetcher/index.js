@@ -1,18 +1,18 @@
 const fetch = require("fetch");
 const fs = require("fs");
 
-const controlsList = JSON.parse(fs.readFileSync("./github-filefetcher/snippets.json", "utf-8"));
+const snippetsList = JSON.parse(fs.readFileSync("./github-filefetcher/snippets.json", "utf-8"));
 
-function getDowndloadURL(control, file){
+function getDowndloadURL(snippet, file){
     let path = '';
-    if(!controlsList[control]){
+    if(!snippetsList[snippet]){
         return false;
     }
     if(file == "docs"){
-        path = controlsList[control].docs;
+        path = snippetsList[snippet].docs;
     }
     if(file == "example"){
-        path = controlsList[control].example;
+        path = snippetsList[snippet].example;
 
     }
     
