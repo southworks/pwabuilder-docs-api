@@ -5,7 +5,7 @@ const constants = require('../constants');
 
 module.exports = async (snippet, file) => {
     let path = '';
-    const filesList =  JSON.parse(fs.readFileSync(config.repositoryIndexPath, "utf-8"));
+    const filesList = await readIndex(config.repositoryIndexPath);
     if (!filesList[snippet]) {
         return false;
     }
@@ -18,12 +18,30 @@ module.exports = async (snippet, file) => {
     }
 
     const promise = new Promise(function (resolve, reject) {
-        fetch.fetchUrl(`https://api.github.com/repos/pwa-builder/pwabuilder-snippits/contents/src/${path}?`, (error, meta, body) => {
+        fetch.fetchUrl(`${config.baseGitHubUrl}${config.ownerGitHubUrl}${config.repoGitHubUrl}${config.endpointGithubUrl}${path}?`, (error, meta, body) => {
             if (error) {
                 console.log(error);
             }
             const file_metadata = JSON.parse(body.toString());
             resolve(file_metadata.download_url);
+        })
+    })
+
+    return promise;
+
+}
+
+
+const readIndex = async function (path) {
+    const promise = new Promise(async function (resolve, reject) {
+        await fs.readFile(path, "utf-8", function (err, contents) {
+            if (err) {
+                reject(err);
+                console.log(err);
+            }
+
+            const file_list = JSON.parse(contents);
+            resolve(file_list);
         })
     })
 
