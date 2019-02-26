@@ -1,36 +1,32 @@
 const fetch = require("fetch");
 const fs = require("fs");
+const config = require('../config');
+const constants = require('../constants');
 
-const snippetsList = JSON.parse(fs.readFileSync("./github-filefetcher/snippets.json", "utf-8"));
-
-function getDowndloadURL(snippet, file){
+module.exports = async (snippet, file) => {
     let path = '';
-    if(!snippetsList[snippet]){
+    const filesList =  JSON.parse(fs.readFileSync(config.repositoryIndexPath, "utf-8"));
+    if (!filesList[snippet]) {
         return false;
     }
-    if(file == "docs"){
-        path = snippetsList[snippet].docs;
+    if (file == constants.DOCS) {
+        path = filesList[snippet].docs;
     }
-    if(file == "example"){
-        path = snippetsList[snippet].example;
+    if (file == constants.EXAMPLE) {
+        path = filesList[snippet].example;
 
     }
-    
-    let promise = new Promise(function(resolve, reject){
-            fetch.fetchUrl(`https://api.github.com/repos/pwa-builder/pwabuilder-snippits/contents/src/${path}?`, (error, meta, body) => {
-                if(error){
-                    console.log(error);
-                    process.exit();
-                }
-                const file_metadata = JSON.parse(body.toString());
-                resolve( file_metadata.download_url);
-            })
-        }).then((res) => {
-            return res;
-        }) 
-   
+
+    const promise = new Promise(function (resolve, reject) {
+        fetch.fetchUrl(`https://api.github.com/repos/pwa-builder/pwabuilder-snippits/contents/src/${path}?`, (error, meta, body) => {
+            if (error) {
+                console.log(error);
+            }
+            const file_metadata = JSON.parse(body.toString());
+            resolve(file_metadata.download_url);
+        })
+    })
+
     return promise;
 
 }
-
-module.exports = getDowndloadURL;
