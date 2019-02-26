@@ -1,16 +1,15 @@
 
 const fetch = require("fetch");
 
-fetchFileFromGitHub = function (url) {
-   
-    fetch.fetchUrl(url, (error, meta, body) => {
-        if (error) {
-            console.log(error);
-            process.exit();
-        }
-        const file_metadata = JSON.parse(body.toString());
-        return  file_metadata.download_url;
+module.exports = (url, options) => {
+    return new Promise((resolve, reject) => {
+        fetch.fetchUrl(url, options, (error, meta, body) => {
+           if(error || !body){
+                reject(error || meta.status);
+           }
+           const file_metadata;
+           resolve(file_metadata.download_url = JSON.parse(body.toString()));
+        });
     })
+    
 };
-
-module.exports = fetchFileFromGitHub
