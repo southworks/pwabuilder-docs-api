@@ -1,7 +1,8 @@
 const fetch = require("fetch");
-const fs = require("fs");
+const fs = require("fs-extra");
 const config = require('../config');
 const constants = require('../constants');
+const download = require('download');
 
 module.exports = async (snippet, file) => {
     let path = '';
@@ -22,8 +23,10 @@ module.exports = async (snippet, file) => {
             if (error) {
                 console.log(error);
             }
+
             const file_metadata = JSON.parse(body.toString());
-            resolve(file_metadata.download_url);
+            let snippetContent = downloadHTMLFromURL(file_metadata.download_url);
+            resolve(snippetContent);
         })
     })
 
@@ -47,4 +50,23 @@ const readIndex = async function (path) {
 
     return promise;
 
+}
+
+const downloadHTMLFromURL = function (downloadURL) {
+
+    const promise = new Promise(async function (resolve, reject) {
+        var dir = constants.SNIPPETS_FOLDER;
+        var fileName = downloadURL.substring(downloadURL.lastIndexOf('/') + 1);
+
+        fs.ensureDir(dir, err => {
+            download(downloadURL).pipe(fs.createWriteStream(dir + fileName));
+        })
+
+        fs.readFile(dir + fileName, "utf8", (err, data) => {
+            if (err) throw err;
+            const file_content = data;
+            resolve(file_content);
+        });
+    });
+    return promise;
 }

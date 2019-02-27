@@ -4,6 +4,7 @@ module.exports = {
     ERROR_MESSAGE:"Snippet or file doesn't exists",
     PORT_INFO:'Server running on port',
     DOCS: "docs",
-    EXAMPLE: "examples"
+    EXAMPLE: "examples",
+    SNIPPETS_FOLDER:"snippets/"
 }
 

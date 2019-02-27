@@ -7,7 +7,7 @@ app.get('/', async function(req,res){
     let url = await getDowndloadURL(req.query.snippet, req.query.file);
     if(url){
         res.status(constants.SUCESSFUL).send({
-            url: url
+            content: url
         })
     } else {
         res.status(constants.NOT_FOUND).send({
