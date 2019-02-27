@@ -1,13 +1,13 @@
 const app = require('express')();
-const getDowndloadURL = require('./github-filefetcher');
+const getContentURL = require('./github-filefetcher');
 const config = require('./config');
 const constants = require('./constants');
 
 app.get('/', async function(req,res){
-    let url = await getDowndloadURL(req.query.control, req.query.file);
-    if(url){
+    let content = await getContentURL(req.query.snippet, req.query.file);
+    if(content){
         res.status(constants.SUCESSFUL).send({
-            content: url
+            content: content
         })
     } else {
         res.status(constants.NOT_FOUND).send({
