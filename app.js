@@ -19,5 +19,3 @@ app.get('/', async function(req,res){
 app.listen(config.port, () => {
     console.log(constants.PORT_INFO,config.port)
   });
-
-  

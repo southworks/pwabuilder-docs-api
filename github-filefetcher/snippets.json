@@ -1,6 +1,99 @@
 {
     "compactOverlay": {
-        "docs": "compactOverlay/compactOverlay.html",
-        "example": "compactOverlay/compactOverlay.js"
+        "docs": "src/compactOverlay/docs.html",
+        "snippets": [
+            "src/compactOverlay/compactOverlay.html",
+            "src/compactOverlay/compactOverlay.js"
+        ]
+    },
+    "darkTheme": {
+        "docs": "src/darkTheme/docs.html",
+        "snippets": [
+            "src/darkTheme/darkTheme.html",
+            "src/darkTheme/darkTheme.js"
+        ]
+    },
+    "fullScreen": {
+        "docs": "src/fullScreen/docs.html",
+        "snippets": [
+            "src/fullScreen/fullScreen.html",
+            "src/fullScreen/fullScreen.js"
+        ]
+    },
+    "graphAuth": {
+        "docs": "src/graphAuth/docs.html",
+        "snippets": [
+            "src/graphAuth/graphAuth.html",
+            "src/graphAuth/graphAuth.js"
+        ]
+    },
+    "graphCalendar": {
+        "docs": "src/graphCalendar/docs.html",
+        "snippets": [
+            "src/graphCalendar/graphCalendar.html",
+            "src/graphCalendar/graphCalendar.js"
+        ]
+    },
+    "graphContacts": {
+        "docs": "src/graphContacts/docs.html",
+        "snippets": [
+            "src/graphContacts/graphContacts.html",
+            "src/graphContacts/graphContacts.js"
+        ]
+    },
+    "graphCreateActivity": {
+        "docs": "src/graphCreateActivity/docs.html",
+        "snippets": [
+            "src/graphCreateActivity/graphCreateActivity.html",
+            "src/graphCreateActivity/graphCreateActivity.js"
+        ]
+    },
+    "messageDialog": {
+        "docs": "src/messageDialog/docs.html",
+        "snippets": [
+            "src/messageDialog/messageDialog.html",
+            "src/messageDialog/messageDialog.js"
+        ]
+    },
+    "secondaryTile": {
+        "docs": "src/secondaryTile/docs.html",
+        "snippets": [
+            "src/secondaryTile/secondaryTile.js"
+        ]
+    },
+    "share": {
+        "docs": "src/share/docs.html",
+        "snippets": [
+            "src/share/share.html",
+            "src/share/share.js"
+        ]
+    },
+    "timeline": {
+        "docs": "src/timeline/docs.html",
+        "snippets": [
+            "src/timeline/timeline.html",
+            "src/timeline/timeline.js"
+        ]
+    },
+    "titleBar": {
+        "docs": "src/titleBar/docs.html",
+        "snippets": [
+            "src/titleBar/titleBar.html",
+            "src/titleBar/titleBar.js"
+        ]
+    },
+    "toastNotification": {
+        "docs": "src/toastNotification/docs.html",
+        "snippets": [
+            "src/toastNotification/toastNotification.html",
+            "src/toastNotification/toastNotification.js"
+        ]
+    },
+    "windowsTitle": {
+        "docs": "src/windowsTitle/docs.html",
+        "snippets": [
+            "src/windowsTitle/windowsTitle.html",
+            "src/windowsTitle/windowsTitle.js"
+        ]
     }
 }
