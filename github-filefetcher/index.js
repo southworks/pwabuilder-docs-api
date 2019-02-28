@@ -3,7 +3,8 @@ const fs = require("fs");
 const config = require('../config');
 const constants = require('../constants');
 const fetch = require("fetch");
-
+const download = require("download");
+const { StringDecoder } = require('string_decoder');
 const FetchStream = fetch.FetchStream;
 
 
@@ -17,29 +18,40 @@ module.exports = async (snippet) => {
         return false;
     }
         let pathlist = [];
-
+        
         pathlist.push(filesList[snippet].docs);
         
         const results = await Promise.all(pathlist.concat(filesList[snippet].snippets)
-                                        .map((path) => fetchService(`${config.baseGitHubUrl}/${config.ownerGitHubUrl}/${config.repoGitHubUrl}/${config.endpointGithubUrl}/${path}?ref=add/snippits-index`))
-        );
+                                        .map((path) => {
+                                            const promise = fetchService(`${config.baseGitHubUrl}/${config.ownerGitHubUrl}/${config.repoGitHubUrl}/${config.endpointGithubUrl}/${path}?ref=add/snippits-index`);
+                                            
+                                            if(path.includes(constants.DOCS)){
+                                                return promise.then((downloadUrl) => downloadHTMLFromURL(downloadUrl));    
+                                            }
+
+                                            return promise;
+                                        }));
 
         return results.reduce((previous, current) => {
-            if(current.includes(constants.DOCS)){
+            if(!current.includes(config.repoGitHubUrl)){
                 previous.docs = current;
             }
             else {
                 previous.snippets.push(current);    
             }
-            console.log(previous);
             return previous;
         }, {
             docs: "",
             snippets: []
         });
-
 }
 
+const downloadHTMLFromURL = (downloadURL) => {
+    return download(downloadURL).then((buffer) => {
+                let decoder = new StringDecoder('utf8');
+                return decoder.write(buffer);
+            });
+    }
 
 const readIndex = (path) => {
     const promise = new Promise((resolve, reject) => {
