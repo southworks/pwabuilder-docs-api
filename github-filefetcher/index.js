@@ -4,7 +4,7 @@ const config = require('../config');
 const constants = require('../constants');
 const download = require('download');
 const { StringDecoder } = require('string_decoder');
-const decoder = new StringDecoder('utf8');
+
 
 module.exports = async (snippet, file) => {
     let path = '';
@@ -54,8 +54,10 @@ const readIndex = async function (path) {
 
 }
 
-const downloadHTMLFromURL = function (downloadURL) {
-
-    return download(downloadURL)
-           .then((buffer) => { return decoder.write(buffer)});
+const downloadHTMLFromURL = (downloadURL) => {
+    
+    return download(downloadURL).then((buffer) => { 
+                const decoder = new StringDecoder('utf8');
+                return decoder.write(buffer)
+            });
 }
