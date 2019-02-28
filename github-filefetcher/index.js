@@ -7,49 +7,45 @@ const fetch = require("fetch");
 const FetchStream = fetch.FetchStream;
 
 
-module.exports = async (snippet, file) => {
-    let path = '';
-    //using sync as callback alternative is deprecated
+module.exports = async (snippet) => {
     if(!fs.existsSync(config.repositoryIndexPath)){ 
-        const downloadurl = await fetchService(config.snippetsURL)
-        await downloadFile(downloadurl, config.repositoryIndexPath);
+        const downloadUrl = await fetchService(`${config.baseGitHubUrl}/${config.ownerGitHubUrl}/${config.repoGitHubUrl}/${config.endpointGithubUrl}/${config.snippetsURL}`);
+        await downloadFile(downloadUrl, config.repositoryIndexPath);
     }
     const filesList = await readIndex(config.repositoryIndexPath);
     if (!filesList[snippet]) {
         return false;
     }
-        console.log(filesList[snippet]);
-        console.log(filesList[snippet].snippets);
-        var pathlist = [];
-        var urlList = [];
-        pathlist.push(filesList[snippets].docs).then(
-        filesList[snippet].snippets.forEach(function(element) {
-            console.log(isArray(filesList[snippet].snippets));
-            pathlist.push(filesList[snippet].snippets[element]);   
-            console.log(filesList[snippet].snippets[element]);            
-         }))
-           
-                .then( pathlist.forEach(async function(path) {
-                            console.log('segundoforeach');
-                            let url = await fetchService(`${config.baseGitHubUrl}${config.ownerGitHubUrl}${config.repoGitHubUrl}${config.endpointGithubUrl}${path}?`);
-                            urlList.push(url);
-                        }))
-                
-     
-    //let urlfile = await fetchService(`${config.baseGitHubUrl}${config.ownerGitHubUrl}${config.repoGitHubUrl}${config.endpointGithubUrl}${path}?`);
-    console.log(urlList);
-    return urlList;
-//TODO : agregar service desde jiraexporttoool
+        let pathlist = [];
+
+        pathlist.push(filesList[snippet].docs);
+        
+        const results = await Promise.all(pathlist.concat(filesList[snippet].snippets)
+                                        .map((path) => fetchService(`${config.baseGitHubUrl}/${config.ownerGitHubUrl}/${config.repoGitHubUrl}/${config.endpointGithubUrl}/${path}?ref=add/snippits-index`))
+        );
+
+        return results.reduce((previous, current) => {
+            if(current.includes(constants.DOCS)){
+                previous.docs = current;
+            }
+            else {
+                previous.snippets.push(current);    
+            }
+            return previous;
+        }, {
+            docs: "",
+            snippets: []
+        });
+
 }
 
 
-const readIndex = async function (path) {
-    const promise = new Promise(async function (resolve, reject) {
-        console.log("entro al read");
-           await fs.readFile(path, "utf-8", function (err, contents) {
+const readIndex = (path) => {
+    const promise = new Promise((resolve, reject) => {
+            fs.readFile(path, "utf-8", (err, contents) => {
             if (err) {
-                reject(err);
                 console.log(err);
+                reject(err);
             }
             const file_list = JSON.parse(contents);
             resolve(file_list);
@@ -58,23 +54,13 @@ const readIndex = async function (path) {
     return promise;
 }
 
-async function downloadFile(url, dest) {
-    
-    
+async function downloadFile(url, dest) {  
     return new Promise((resolve, reject) => {
         const file = fs.createWriteStream(dest);
-        console.log('creo write stream');
-        const fetchStream =  new FetchStream("https://raw.githubusercontent.com/southworkscom/pwabuilder-snippits/add/snippits-index/snippets.json");
-        console.log('creo el fetchstream');
+        const fetchStream =  new FetchStream(url);
         fetchStream.pipe(file);
 
-        fetchStream.on('end', () => {
-            console.log('downloaded!');
-        });
-
-        file.on("finish", () => {
-            resolve();
-        });
+        file.on("finish", () => resolve());
 
         file.on("error", err => {
             file.close();
