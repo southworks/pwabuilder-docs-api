@@ -31,6 +31,7 @@ module.exports = async (snippet) => {
             else {
                 previous.snippets.push(current);    
             }
+            console.log(previous);
             return previous;
         }, {
             docs: "",
