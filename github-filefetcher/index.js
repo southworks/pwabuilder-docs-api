@@ -3,6 +3,8 @@ const fs = require("fs-extra");
 const config = require('../config');
 const constants = require('../constants');
 const download = require('download');
+const { StringDecoder } = require('string_decoder');
+const decoder = new StringDecoder('utf8');
 
 module.exports = async (snippet, file) => {
     let path = '';
@@ -54,19 +56,6 @@ const readIndex = async function (path) {
 
 const downloadHTMLFromURL = function (downloadURL) {
 
-    const promise = new Promise(async function (resolve, reject) {
-        var dir = constants.SNIPPETS_FOLDER;
-        var fileName = downloadURL.substring(downloadURL.lastIndexOf('/') + 1);
-
-        fs.ensureDir(dir, err => {
-            download(downloadURL).pipe(fs.createWriteStream(dir + fileName));
-        })
-
-        fs.readFile(dir + fileName, "utf8", (err, data) => {
-            if (err) throw err;
-            const file_content = data;
-            resolve(file_content);
-        });
-    });
-    return promise;
+    return download(downloadURL)
+           .then((buffer) => { return decoder.write(buffer)});
 }
