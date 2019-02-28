@@ -27,7 +27,7 @@ module.exports = async (snippet, file) => {
             }
 
             const file_metadata = JSON.parse(body.toString());
-            let snippetContent = downloadHTMLFromURL(file_metadata.download_url);
+            const snippetContent = downloadHTMLFromURL(file_metadata.download_url);
             resolve(snippetContent);
         })
     })
