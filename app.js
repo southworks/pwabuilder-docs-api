@@ -5,6 +5,7 @@ const constants = require('./constants');
 
 app.get('/', async function(req,res){
     let url = await getDowndloadURL(req.query.control);
+
     if(url){
         res.status(constants.SUCESSFUL).send(url)
     } else {
