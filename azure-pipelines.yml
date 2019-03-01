@@ -11,11 +11,8 @@ pool:
 
 
   steps:
-    script: docker build --target $(targetName) -t pwabuilderDocsApi . 
-    displayName: Build docker image
-    script: docker tag pwabuilderDocsApi $(dockerId).azurecr.io/pwabuilderDocsApi:$(Build.SourceVersion)
-    displayName: Re-tag docker image
-    script: docker login -u $(dockerId) -p $(dockerPassword) $(dockerid).azurecr.io
-    displayName: Authenticate ACR
-    script: docker push $(dockerId).azurecr.io/pwabuilderDocsApi:$(Build.SourceVersion)
-    displayName: Push docker image 
+  - script: |
+     docker build --target $(targetName) -t pwabuilderDocsApi . 
+     docker tag pwabuilderDocsApi $(dockerId).azurecr.io/pwabuilderDocsApi:$(Build.SourceVersion)
+     docker login -u $(dockerId) -p $(dockerPassword) $(dockerid).azurecr.io
+     docker push $(dockerId).azurecr.io/pwabuilderDocsApi:$(Build.SourceVersion)
