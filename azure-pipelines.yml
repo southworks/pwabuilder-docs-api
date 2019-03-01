@@ -3,11 +3,11 @@ jobs:
   pool:
     vmImage: 'Ubuntu 16.04'
   steps:
-  - script: docker build -t pwabuilderdocsapi . 
+  - bash: docker build -t pwabuilderdocsapi . 
     displayName: Build docker image
-  - script: docker tag pwabuilderdocsapi $(dockerId).azurecr.io/pwabuilderdocsapi:$(Build.SourceVersion)
+  - bash: docker tag pwabuilderdocsapi $(dockerId).azurecr.io/pwabuilderdocsapi:$(Build.SourceVersion)
     displayName: Re-tag docker image
-  - script: docker login -u $(dockerId) -p $(dockerPassword) $(dockerid).azurecr.io
+  - bash: docker login -u $(dockerId) -p $(dockerPassword) $(dockerid).azurecr.io
     displayName: Authenticate ACR
-  - script: docker push $(dockerId).azurecr.io/pwabuilderdocsapi:$(Build.SourceVersion)
+  - bash: docker push $(dockerId).azurecr.io/pwabuilderdocsapi:$(Build.SourceVersion)
     displayName: Push docker image 
