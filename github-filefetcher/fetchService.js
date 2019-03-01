@@ -1,4 +1,3 @@
-
 const fetch = require("fetch");
 
 module.exports = (url, options) => {
@@ -7,8 +6,8 @@ module.exports = (url, options) => {
            if(error || !body){
                 reject(error || meta.status);
            }
-           const file_metadata;
-           resolve(file_metadata.download_url = JSON.parse(body.toString()));
+           let fileJson = JSON.parse(body.toString());
+           resolve(fileJson.download_url);
         });
     })
     
