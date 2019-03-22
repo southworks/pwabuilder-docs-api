@@ -4,7 +4,7 @@ const config = require('./config');
 const constants = require('./constants');
 
 app.get('/', async function(req,res){
-    let url = await getDowndloadURL(req.query.control);
+    let url = await getDowndloadURL.getSingleSnippet(req.query.control);
 
     if(url){
         res.status(constants.SUCESSFUL).send(url)

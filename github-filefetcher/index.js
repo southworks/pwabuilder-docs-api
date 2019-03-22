@@ -8,39 +8,62 @@ const { StringDecoder } = require('string_decoder');
 const FetchStream = fetch.FetchStream;
 
 
-module.exports = async (snippet) => {
-    if(!fs.existsSync(config.repositoryIndexPath)){ 
+module.exports = {
+    getSingleSnippet: async (snippet) => {
+        return getSnippetsIndex().then((snippetsIndex) => {
+            if(!snippetsIndex[snippet]) {
+                throw new Error("The requested snippet does not exists or is not indexed");
+            }
+
+            return snippetsIndex[snippet];
+        }).then(getSnippetMetadata);
+    }
+}
+
+// const getSingleSnippet = {
+
+
+// }
+
+// const locateSnippet = () => {
+   
+// }
+
+
+
+const getSnippetsIndex = async () => {
+    if (!fs.existsSync(config.repositoryIndexPath)) {
         const downloadUrl = await fetchService(`${config.baseGitHubUrl}/${config.ownerGitHubUrl}/${config.repoGitHubUrl}/${config.endpointGithubUrl}/${config.snippetsURL}`);
         await downloadFile(downloadUrl, config.repositoryIndexPath);
     }
-    const filesList = await readIndex(config.repositoryIndexPath);
-    if (!filesList[snippet]) {
-        return false;
-    }
-        let pathlist = [];
-        
-        pathlist.push(filesList[snippet].docs);
-        
-        const results = await Promise.all(pathlist.concat(filesList[snippet].snippets)
-                                        .map((path) => {
-                                            const promise = fetchService(`${config.baseGitHubUrl}/${config.ownerGitHubUrl}/${config.repoGitHubUrl}/${config.endpointGithubUrl}/${path}?ref=add/snippits-index`);
-                                            
-                                            if(path.includes(constants.DOCS)){
-                                                return promise.then((downloadUrl) => downloadHTMLFromURL(downloadUrl));    
-                                            }
+    return await readIndex(config.repositoryIndexPath);
+}
 
-                                            return promise;
-                                        }));
+const getSnippetMetadata = async (snippet) => {
+    let pathlist = [];
 
-        return results.reduce((previous, current) => {
-            if(!current.includes(config.repoGitHubUrl)){
-                previous.docs = current;
+    pathlist.push(snippet.docs);
+
+    const results = await Promise.all(pathlist.concat(snippet.snippets)
+        .map((path) => {
+            const promise = fetchService(`${config.baseGitHubUrl}/${config.ownerGitHubUrl}/${config.repoGitHubUrl}/${config.endpointGithubUrl}/${path}?ref=add/snippits-index`);
+
+            if (path.includes(constants.DOCS)) {
+                return promise.then((downloadUrl) => downloadHTMLFromURL(downloadUrl));
             }
-            else {
-                previous.snippets.push(current);    
-            }
-            return previous;
-        }, {
+
+            return promise;
+        }));
+
+    return results.reduce((previous, current) => {
+        if (!current.includes(config.repoGitHubUrl)) {
+            previous.docs = current;
+        }
+        else {
+            previous.snippets.push(current);
+        }
+        return previous;
+    }, {
             docs: "",
             snippets: []
         });
@@ -48,14 +71,14 @@ module.exports = async (snippet) => {
 
 const downloadHTMLFromURL = (downloadURL) => {
     return download(downloadURL).then((buffer) => {
-                let decoder = new StringDecoder('utf8');
-                return decoder.write(buffer);
-            });
-    }
+        let decoder = new StringDecoder('utf8');
+        return decoder.write(buffer);
+    });
+}
 
 const readIndex = (path) => {
     const promise = new Promise((resolve, reject) => {
-            fs.readFile(path, "utf-8", (err, contents) => {
+        fs.readFile(path, "utf-8", (err, contents) => {
             if (err) {
                 console.log(err);
                 reject(err);
@@ -67,10 +90,10 @@ const readIndex = (path) => {
     return promise;
 }
 
-async function downloadFile(url, dest) {  
+async function downloadFile(url, dest) {
     return new Promise((resolve, reject) => {
         const file = fs.createWriteStream(dest);
-        const fetchStream =  new FetchStream(url);
+        const fetchStream = new FetchStream(url);
         fetchStream.pipe(file);
 
         file.on("finish", () => resolve());
@@ -81,9 +104,10 @@ async function downloadFile(url, dest) {
             if (err.code === "EEXIST") {
                 reject("File already exists");
             } else {
-                fs.unlink(dest, () => {}); // Delete temp file
+                fs.unlink(dest, () => { }); // Delete temp file
                 reject(err.message);
             }
         });
+
     });
 }
