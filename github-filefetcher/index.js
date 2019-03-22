@@ -17,19 +17,17 @@ module.exports = {
 
             return snippetsIndex[snippet];
         }).then(getSnippetMetadata);
+    },
+    getAllSnippets: async () => {
+        return getSnippetsIndex().then((snippets) =>{
+           return Promise.all(Object.keys(snippets).map((snippet) => {
+                return getSnippetMetadata(snippets[snippet]);
+
+            }));
+            
+        });
     }
 }
-
-// const getSingleSnippet = {
-
-
-// }
-
-// const locateSnippet = () => {
-   
-// }
-
-
 
 const getSnippetsIndex = async () => {
     if (!fs.existsSync(config.repositoryIndexPath)) {
